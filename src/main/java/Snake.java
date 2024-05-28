@@ -34,4 +34,8 @@ public class Snake {
     public void addTileToHead(int position) {
         tilePositions.add(0, new SnakeTile(scaledTileSize, position));
     }
+
+    public void removeTailTile() {
+        tilePositions.remove(tilePositions.size()-1);
+    }
 }

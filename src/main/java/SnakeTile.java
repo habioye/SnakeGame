@@ -1,6 +1,6 @@
 public class SnakeTile extends Tile {
     
-    int position;
+    private int position;
 
     SnakeTile(int scaledSize, int position) {
         super(scaledSize);

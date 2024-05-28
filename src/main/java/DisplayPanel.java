@@ -28,7 +28,7 @@ public class DisplayPanel extends JPanel implements Runnable {
     int snakeX = 0;   // used to update snake x position.
     int snakeY = 0;   // used to update snake y position.
     int snakeSpeed = 4; // used to adjust snake default speed.
-    int snakeStartPosition = (maxScreenRows*(maxScreenColumns/2));
+    int snakeStartPosition = (maxScreenRows*maxScreenColumns)/2;
     Snake snake;
 
     // GAME LOOP SETTINGS
@@ -45,6 +45,8 @@ public class DisplayPanel extends JPanel implements Runnable {
         for(int i = 0; i < maxScreenColumns*maxScreenRows; i++) {
             allTiles.add(new Tile(scaledTileSize));
         }
+        allTiles.remove(snakeStartPosition);
+        allTiles.add(snakeStartPosition, new SnakeTile(scaledTileSize, snakeStartPosition));
 
         this.snake = new Snake(snakeX, snakeY, snakeSpeed, 
         scaledTileSize, snakeStartPosition);
@@ -81,6 +83,10 @@ public class DisplayPanel extends JPanel implements Runnable {
             lastTimeDrawn = currentTime;
 
             if(delta >= 1) {
+
+                // Spawn food if needed.
+                checkFoodSpawn();
+                
                 // Update position of snake, food, and moving enemies.
                 updatePosition();
                 
@@ -92,25 +98,70 @@ public class DisplayPanel extends JPanel implements Runnable {
 
     }
 
+    public void checkFoodSpawn() {
+        int newFoodPos = FoodGeneration.generateFood(getUnoccupiedTiles(), scaledTileSize);
+        if(newFoodPos <= -1) return;
+        else {
+            allTiles.remove(newFoodPos);
+            allTiles.add(newFoodPos, new FoodTile(scaledTileSize, newFoodPos));
+        }
+    }
+
     // updatePosition() will update the snakes position,
     // the food position, powerup position, moving enemies,
     // etc.
     public void updatePosition() {
         if(movement.getUp() == true) {
-            int headPos = snake.getTilePositions().get(0).position;
-            snake.addTileToHead(headPos-maxScreenColumns+1);
+            int headPos = snake.getTilePositions().get(0).getPosition();
+            int newPos = headPos-maxScreenColumns;
+            snake.addTileToHead(newPos);
+
+            allTiles.remove(newPos);
+            allTiles.add(newPos, new SnakeTile(scaledTileSize, newPos));
+            int tailPosition = snake.getTilePositions().get(snake.getTilePositions().size()-1).getPosition();
+
+            snake.removeTailTile();
+            allTiles.remove(tailPosition);
+            allTiles.add(tailPosition, new Tile(scaledTileSize));
         }
         else if(movement.getDown() == true) {
-            int headPos = snake.getTilePositions().get(0).position;
-            snake.addTileToHead(headPos+maxScreenColumns-1);
+            int headPos = snake.getTilePositions().get(0).getPosition();
+            int newPos = headPos+maxScreenColumns;
+            snake.addTileToHead(newPos);
+
+            allTiles.remove(newPos);
+            allTiles.add(newPos, new SnakeTile(scaledTileSize, newPos));
+            int tailPosition = snake.getTilePositions().get(snake.getTilePositions().size()-1).getPosition();
+            
+            snake.removeTailTile();
+            allTiles.remove(tailPosition);
+            allTiles.add(tailPosition, new Tile(scaledTileSize));
         }
         else if(movement.getLeft() == true) {
-            int headPos = snake.getTilePositions().get(0).position;
-            snake.addTileToHead(headPos-1);
+            int headPos = snake.getTilePositions().get(0).getPosition();
+            int newPos = headPos-1;
+            snake.addTileToHead(newPos);
+
+            allTiles.remove(newPos);
+            allTiles.add(newPos, new SnakeTile(scaledTileSize, newPos));
+            int tailPosition = snake.getTilePositions().get(snake.getTilePositions().size()-1).getPosition();
+            
+            snake.removeTailTile();
+            allTiles.remove(tailPosition);
+            allTiles.add(tailPosition, new Tile(scaledTileSize));
         }
         else if(movement.getRight() == true) {
-            int headPos = snake.getTilePositions().get(0).position;
-            snake.addTileToHead(headPos+1);
+            int headPos = snake.getTilePositions().get(0).getPosition();
+            int newPos = headPos+1;
+            snake.addTileToHead(newPos);
+
+            allTiles.remove(newPos);
+            allTiles.add(newPos, new SnakeTile(scaledTileSize, newPos));
+            int tailPosition = snake.getTilePositions().get(snake.getTilePositions().size()-1).getPosition();
+            
+            snake.removeTailTile();
+            allTiles.remove(tailPosition);
+            allTiles.add(tailPosition, new Tile(scaledTileSize));
         }
         return;
     }
@@ -136,14 +187,39 @@ public class DisplayPanel extends JPanel implements Runnable {
         
         // Draw over every single tile that
         // the snake inhabits. 
-        g2.setColor(Color.GREEN);
-        for(SnakeTile t: snake.getTilePositions()) {
-            
-            int row = t.getPosition()/16;
-            int column = t.getPosition()%16;
-            g2.fillRect(column*scaledTileSize, row*scaledTileSize, scaledTileSize, scaledTileSize);
+        // for(SnakeTile t: snake.getTilePositions()) {
+        //     int row = t.getPosition()/16;
+        //     int column = t.getPosition()%16;
+        //     g2.fillRect(column*scaledTileSize, row*scaledTileSize, scaledTileSize, scaledTileSize);
+        // }
+
+        for(Tile t: allTiles) {
+            if(t instanceof SnakeTile) {
+                g2.setColor(Color.GREEN);
+                int row = ((SnakeTile)t).getPosition()/maxScreenColumns;
+                int column = ((SnakeTile)t).getPosition()%maxScreenColumns;
+                g2.fillRect(column*scaledTileSize, row*scaledTileSize, scaledTileSize, scaledTileSize);
+            }
+            else if(t instanceof FoodTile) {
+                g2.setColor(Color.ORANGE);
+                int row = ((FoodTile)t).getPosition()/maxScreenColumns;
+                int column = ((FoodTile)t).getPosition()%maxScreenColumns;
+                g2.fillRect(column*scaledTileSize, row*scaledTileSize, scaledTileSize-6, scaledTileSize-6);
+            }
         }
+
         g2.dispose();
+    }
+
+    public ArrayList<Integer> getUnoccupiedTiles() {
+        ArrayList<Integer> listOfPositions = new ArrayList<>();
+        for(int i = 0; i < allTiles.size(); i++) {
+            Tile t = allTiles.get(i);
+            if(!(t instanceof SnakeTile) && !(t instanceof FoodTile)) {
+                listOfPositions.add(i);
+            }
+        }
+        return listOfPositions;
     }
 
 }
