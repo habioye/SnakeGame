@@ -2,6 +2,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 @SuppressWarnings("serial")
 public class MainMenuWindow extends JFrame implements ActionListener {
@@ -10,10 +12,11 @@ public class MainMenuWindow extends JFrame implements ActionListener {
 	static final int FRAME_Y = FRAME_X;
 	static final Font HEADER_FONT = new Font("Dialog", Font.BOLD, 48);
 	static final Font BUTTON_FONT = new Font("Dialog", Font.BOLD, 24);
+	static final Font SOUTH_FONT = new Font("Dialog", Font.BOLD, 24);
 
 	// Swing components we'll be using
 	JPanel northPanel, centerPanel, southPanel;
-	JLabel headerText;
+	JLabel headerLabel, musicLabel, soundLabel;
 	JButton easyButton, mediumButton, hardButton;
 	JSlider musicSlider, soundSlider;
 
@@ -29,10 +32,10 @@ public class MainMenuWindow extends JFrame implements ActionListener {
 
 		// Instantiate Swing components for north section
 		northPanel = new JPanel();
-		headerText = new JLabel("🐍  Snake  🐍");
-		headerText.setFont(HEADER_FONT);
+		headerLabel = new JLabel("🐍  Snake  🐍");
+		headerLabel.setFont(HEADER_FONT);
 
-		northPanel.add(headerText);
+		northPanel.add(headerLabel);
 
 		add(northPanel, BorderLayout.NORTH);
 
@@ -66,10 +69,30 @@ public class MainMenuWindow extends JFrame implements ActionListener {
 		musicSlider = new JSlider(0, 100, 80);
 		soundSlider = new JSlider(0, 100, 80);
 
-		JSlider[] sliders = { musicSlider, soundSlider };
-		for (JSlider s : sliders) {
-			southPanel.add(s);
-		}
+		musicLabel = new JLabel("Music " + musicSlider.getValue());
+		soundLabel = new JLabel("Sound " + soundSlider.getValue());
+
+		musicLabel.setFont(SOUTH_FONT);
+		soundLabel.setFont(SOUTH_FONT);
+
+		musicSlider.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				musicLabel.setText("Music " + musicSlider.getValue());
+			}
+		});
+
+		soundSlider.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				soundLabel.setText("Sound " + soundSlider.getValue());
+			}
+		});
+
+		southPanel.add(musicLabel);
+		southPanel.add(musicSlider);
+		southPanel.add(soundLabel);
+		southPanel.add(soundSlider);
 
 		add(southPanel, BorderLayout.SOUTH);
 
@@ -89,13 +112,18 @@ public class MainMenuWindow extends JFrame implements ActionListener {
 
 		GameSettings settings = new GameSettings(difficulty, musicSlider.getValue(), soundSlider.getValue());
 		System.out.println(settings);
-		
+
+		// Close this window and start the game
+		// dispose();
+		// SnakeGame.main(null);
+
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		System.out.println(source);
+		revalidate();
 	}
 
 	public static void main(String[] args) {
