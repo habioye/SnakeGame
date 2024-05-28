@@ -28,6 +28,7 @@ public class DisplayPanel extends JPanel implements Runnable {
     int snakeX = 0;   // used to update snake x position.
     int snakeY = 0;   // used to update snake y position.
     int snakeSpeed = 4; // used to adjust snake default speed.
+    Snake snake = new Snake(snakeX, snakeY, snakeSpeed, scaledTileSize, ((maxScreenColumns*maxScreenRows)/2)-1);
 
     // GAME LOOP SETTINGS
     final int FPS = 20;
@@ -49,11 +50,13 @@ public class DisplayPanel extends JPanel implements Runnable {
 
     }
 
-    public void run() {
-
-        // Loop created to run game loop.
+    public void startGameThread() {
+        // Thread created to run game loop.
         gameLoop = new Thread(this);
         gameLoop.start();
+    }
+
+    public void run() {
 
         // Make the thread draw only at a certain
         // speed aka FPS. If FPS set at 60, then 
@@ -72,6 +75,7 @@ public class DisplayPanel extends JPanel implements Runnable {
             if(delta >= 1) {
                 // Update position of snake, food, and moving enemies.
                 updatePosition();
+                System.out.println("Hello");
                 
                 // Repaint the component every iteration of the loop.
                 repaint();
@@ -104,8 +108,13 @@ public class DisplayPanel extends JPanel implements Runnable {
             g2.fillRect(column*scaledTileSize+2, row*scaledTileSize+2, scaledTileSize-4, scaledTileSize-4);
 
         }
+        
         g2.setColor(Color.GREEN);
-        g2.fillRect(snakeX, snakeY, scaledTileSize, scaledTileSize);
+        for(int position: snake.getTilePositions()) {
+            int row = position/16;
+            int column = position%16;
+            g2.fillRect(column*scaledTileSize, row*scaledTileSize, scaledTileSize, scaledTileSize);
+        }
         g2.dispose();
     }
 

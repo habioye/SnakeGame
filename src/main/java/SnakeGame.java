@@ -45,7 +45,7 @@ public class SnakeGame {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
 
-        panel.run();
+        panel.startGameThread();
 
     }
 }
