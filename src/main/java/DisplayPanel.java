@@ -1,6 +1,7 @@
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.awt.Color;
 
 import javax.swing.JPanel;
@@ -20,7 +21,7 @@ public class DisplayPanel extends JPanel implements Runnable {
     final int scaledTileSize = tileSize * scale; // 48x48 tiles
     final int maxScreenColumns = 16;
     final int maxScreenRows = 12;
-    final int screenWidth = scaledTileSize * maxScreenColumns; // 768 px
+    final int screenWidth = (scaledTileSize * maxScreenColumns); // 768 px
     final int screenHeight = scaledTileSize * maxScreenRows;   // 576 px
 
     // DEFAULT SNAKE SETTINGS
@@ -28,12 +29,20 @@ public class DisplayPanel extends JPanel implements Runnable {
     int snakeY = 100;   // used to update snake y position.
     int snakeSpeed = 4; // used to adjust snake default speed.
 
+    // TILE ARRAY
+    ArrayList<Tile> allTiles = new ArrayList<>();
+
     public DisplayPanel() {
+
+        for(int i = 0; i < maxScreenColumns*maxScreenRows; i++) {
+            allTiles.add(new Tile(scaledTileSize));
+        }
 
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true); // all drawing from this component will be
                                             // done in an offscreen painting buffer
+        this.setVisible(true);
 
     }
 
@@ -69,8 +78,16 @@ public class DisplayPanel extends JPanel implements Runnable {
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D)g;
-        g2.setColor(Color.GREEN);
-        g2.fillRect(snakeX, snakeY, scaledTileSize, scaledTileSize);
+        g2.setColor(Color.WHITE);
+        for(int i = 0; i < allTiles.size(); i++) {
+            int row = i/16;
+            int column = i%16;
+            g2.fillRect(column*scaledTileSize, row*scaledTileSize, scaledTileSize, scaledTileSize);
+            g2.setColor(Color.BLACK);
+            g2.fillRect(column*scaledTileSize+2, row*scaledTileSize-2, scaledTileSize-2, scaledTileSize-2);
+            g2.setColor(Color.WHITE);
+
+        }
         g2.dispose();
     }
 

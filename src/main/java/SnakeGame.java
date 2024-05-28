@@ -35,7 +35,7 @@ public class SnakeGame {
 
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setResizable(false);
+        window.setResizable(true);
         window.setTitle("Snake Game");
 
         DisplayPanel panel = new DisplayPanel();
@@ -44,6 +44,8 @@ public class SnakeGame {
         window.pack();
         window.setLocationRelativeTo(null);
         window.setVisible(true);
+
+        panel.run();
 
     }
 }
