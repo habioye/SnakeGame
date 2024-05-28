@@ -34,6 +34,9 @@ public class DisplayPanel extends JPanel implements Runnable {
     // GAME LOOP SETTINGS
     final int FPS = 30;
 
+    // KEY HANDLER
+    MoveHandler movement = new MoveHandler();
+
     // TILE ARRAY
     ArrayList<Tile> allTiles = new ArrayList<>();
 
@@ -49,6 +52,8 @@ public class DisplayPanel extends JPanel implements Runnable {
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true); // all drawing from this component will be
                                             // done in an offscreen painting buffer
+        this.addKeyListener(movement);
+        this.setFocusable(true);
         this.setVisible(true);
 
     }
@@ -81,6 +86,7 @@ public class DisplayPanel extends JPanel implements Runnable {
                 
                 // Repaint the component every iteration of the loop.
                 repaint();
+                delta--;
             }
         }
 
@@ -90,6 +96,22 @@ public class DisplayPanel extends JPanel implements Runnable {
     // the food position, powerup position, moving enemies,
     // etc.
     public void updatePosition() {
+        if(movement.getUp() == true) {
+            int headPos = snake.getTilePositions().get(0).position;
+            snake.addTileToHead(headPos-maxScreenColumns+1);
+        }
+        else if(movement.getDown() == true) {
+            int headPos = snake.getTilePositions().get(0).position;
+            snake.addTileToHead(headPos+maxScreenColumns-1);
+        }
+        else if(movement.getLeft() == true) {
+            int headPos = snake.getTilePositions().get(0).position;
+            snake.addTileToHead(headPos-1);
+        }
+        else if(movement.getRight() == true) {
+            int headPos = snake.getTilePositions().get(0).position;
+            snake.addTileToHead(headPos+1);
+        }
         return;
     }
 
@@ -115,9 +137,10 @@ public class DisplayPanel extends JPanel implements Runnable {
         // Draw over every single tile that
         // the snake inhabits. 
         g2.setColor(Color.GREEN);
-        for(int position: snake.getTilePositions()) {
-            int row = position/16;
-            int column = position%16;
+        for(SnakeTile t: snake.getTilePositions()) {
+            
+            int row = t.getPosition()/16;
+            int column = t.getPosition()%16;
             g2.fillRect(column*scaledTileSize, row*scaledTileSize, scaledTileSize, scaledTileSize);
         }
         g2.dispose();

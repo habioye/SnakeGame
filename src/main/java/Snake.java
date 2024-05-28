@@ -3,20 +3,17 @@ import java.util.ArrayList;
 public class Snake {
     int snakeX;
     int snakeY;
-    int snakeSpeed;
-    ArrayList<Integer> tilePositions;
+    int scaledTileSize;
+    ArrayList<SnakeTile> tilePositions;
 
     public Snake(int x, int y, int speed, int scaledTileSize, int startPosition) {
         snakeX = x;
         snakeY = y;
-        snakeSpeed = speed;
+        this.scaledTileSize = scaledTileSize;
         tilePositions = new ArrayList<>();
-        tilePositions.add(startPosition);
+        tilePositions.add(new SnakeTile(scaledTileSize, startPosition));
     }
 
-    public int getSnakeSpeed() {
-        return snakeSpeed;
-    }
 
     public int getSnakeX() {
         return snakeX;
@@ -26,11 +23,15 @@ public class Snake {
         return snakeY;
     }
 
-    public ArrayList<Integer> getTilePositions() {
+    public ArrayList<SnakeTile> getTilePositions() {
         return tilePositions;
     }
 
     public void addTilePosition(int position) {
-        tilePositions.add(position);
+        tilePositions.add(new SnakeTile(scaledTileSize, position));
+    }
+
+    public void addTileToHead(int position) {
+        tilePositions.add(0, new SnakeTile(scaledTileSize, position));
     }
 }
