@@ -1,30 +1,58 @@
-import javax.swing.JButton;
-import javax.swing.JFrame;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class MainMenuWindow {
+import javax.swing.*;
+
+@SuppressWarnings("serial")
+public class MainMenuWindow extends JFrame implements ActionListener {
+
+	final int FRAME_SIZE = 500;
+	final Font BUTTON_FONT = new Font("Arial", Font.BOLD, 24);
+
+	MainMenuWindow() {
+		super("Snake Game"); // Sets window text
+
+		// Configure window settings
+		setSize(FRAME_SIZE, FRAME_SIZE);
+		setLayout(new BorderLayout());
+		setResizable(false); // Disables resizing window
+		setLocationRelativeTo(null); // Centers window
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Terminates program when window is closed
+
+		// Instantiate Swing components for north section
+		JPanel northPanel = new JPanel();
+		JLabel headerText = new JLabel("🐍  Snake  🐍");
+		headerText.setFont(headerText.getFont().deriveFont(36f));
+
+		northPanel.add(headerText);
+
+		add(northPanel, BorderLayout.NORTH);
+
+		// Instantiate Swing components for center section
+		JPanel centerPanel = new JPanel();
+		JButton easyButton = new JButton("Easy");
+		JButton mediumButton = new JButton("Medium");
+		JButton hardButton = new JButton("Hard");
+
+		centerPanel.add(easyButton);
+		centerPanel.add(mediumButton);
+		centerPanel.add(hardButton);
+
+		add(centerPanel, BorderLayout.CENTER);
+
+		setVisible(true); // Draw the window
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Object source = e.getSource();
+
+	}
 
 	public static void main(String[] args) {
-		// Creating instance of JFrame
-		JFrame frame = new JFrame();
-
-		// Creating instance of JButton
-		JButton button = new JButton(" GFG WebSite Click");
-
-		// x axis, y axis, width, height
-		button.setBounds(150, 200, 220, 50);
-
-		// adding button in JFrame
-		frame.add(button);
-
-		// 400 width and 500 height
-		frame.setSize(500, 600);
-
-		// using no layout managers
-		frame.setLayout(null);
-
-		// making the frame visible
-		frame.setVisible(true);
-
+		new MainMenuWindow();
 	}
 
 }
