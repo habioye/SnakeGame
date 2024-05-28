@@ -25,9 +25,12 @@ public class DisplayPanel extends JPanel implements Runnable {
     final int screenHeight = scaledTileSize * maxScreenRows;   // 576 px
 
     // DEFAULT SNAKE SETTINGS
-    int snakeX = 100;   // used to update snake x position.
-    int snakeY = 100;   // used to update snake y position.
+    int snakeX = 0;   // used to update snake x position.
+    int snakeY = 0;   // used to update snake y position.
     int snakeSpeed = 4; // used to adjust snake default speed.
+
+    // GAME LOOP SETTINGS
+    final int FPS = 20;
 
     // TILE ARRAY
     ArrayList<Tile> allTiles = new ArrayList<>();
@@ -52,14 +55,27 @@ public class DisplayPanel extends JPanel implements Runnable {
         gameLoop = new Thread(this);
         gameLoop.start();
 
+        // Make the thread draw only at a certain
+        // speed aka FPS. If FPS set at 60, then 
+        // draw only 60 times a second.
+        double redrawInterval = 1000000000/FPS;
+        double delta = 0;
+        long lastTimeDrawn = System.nanoTime();
+        long currentTime;
+
         while(gameLoop != null) {
 
-            // Update position of snake, food, and moving enemies.
-            updatePosition();
-            
-            // Repaint the component every iteration of the loop.
-            repaint();
+            currentTime = System.nanoTime();
+            delta += (currentTime - lastTimeDrawn) / redrawInterval;
+            lastTimeDrawn = currentTime;
 
+            if(delta >= 1) {
+                // Update position of snake, food, and moving enemies.
+                updatePosition();
+                
+                // Repaint the component every iteration of the loop.
+                repaint();
+            }
         }
 
     }
@@ -78,16 +94,18 @@ public class DisplayPanel extends JPanel implements Runnable {
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D)g;
-        g2.setColor(Color.WHITE);
+        // Draw every single tile
         for(int i = 0; i < allTiles.size(); i++) {
             int row = i/16;
             int column = i%16;
+            g2.setColor(Color.WHITE);
             g2.fillRect(column*scaledTileSize, row*scaledTileSize, scaledTileSize, scaledTileSize);
             g2.setColor(Color.BLACK);
-            g2.fillRect(column*scaledTileSize+2, row*scaledTileSize-2, scaledTileSize-2, scaledTileSize-2);
-            g2.setColor(Color.WHITE);
+            g2.fillRect(column*scaledTileSize+2, row*scaledTileSize+2, scaledTileSize-4, scaledTileSize-4);
 
         }
+        g2.setColor(Color.GREEN);
+        g2.fillRect(snakeX, snakeY, scaledTileSize, scaledTileSize);
         g2.dispose();
     }
 

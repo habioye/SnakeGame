@@ -35,7 +35,7 @@ public class SnakeGame {
 
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setResizable(true);
+        window.setResizable(false);
         window.setTitle("Snake Game");
 
         DisplayPanel panel = new DisplayPanel();
