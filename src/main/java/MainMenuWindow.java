@@ -8,8 +8,8 @@ import javax.swing.*;
 @SuppressWarnings("serial")
 public class MainMenuWindow extends JFrame implements ActionListener {
 
-	final int FRAME_SIZE = 500;
-	final Font BUTTON_FONT = new Font("Arial", Font.BOLD, 24);
+	static final int FRAME_SIZE = 500;
+	static final Font BUTTON_FONT = new Font("Arial", Font.BOLD, 24);
 
 	MainMenuWindow() {
 		super("Snake Game"); // Sets window text
@@ -35,20 +35,35 @@ public class MainMenuWindow extends JFrame implements ActionListener {
 		JButton easyButton = new JButton("Easy");
 		JButton mediumButton = new JButton("Medium");
 		JButton hardButton = new JButton("Hard");
+		JButton[] buttons = { easyButton, mediumButton, hardButton };
 
-		centerPanel.add(easyButton);
-		centerPanel.add(mediumButton);
-		centerPanel.add(hardButton);
+		// Configure buttons
+		for (JButton b : buttons) {
+			b.setFont(BUTTON_FONT);
+			b.addActionListener(e -> startGame(b));
+			centerPanel.add(b);
+		}
 
 		add(centerPanel, BorderLayout.CENTER);
 
-		setVisible(true); // Draw the window
+		// Draw the window
+		setVisible(true);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
+		System.out.println();
+	}
 
+	public void startGame(JButton button) {
+		if (button.getText() == "Easy") {
+			System.out.println("Start easy game");
+		} else if (button.getText() == "Medium") {
+			System.out.println("Start medium game");
+		} else if (button.getText() == "Hard") {
+			System.out.println("Start hard game");
+		}
 	}
 
 	public static void main(String[] args) {
