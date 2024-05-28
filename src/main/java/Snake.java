@@ -29,4 +29,8 @@ public class Snake {
     public ArrayList<Integer> getTilePositions() {
         return tilePositions;
     }
+
+    public void addTilePosition(int position) {
+        tilePositions.add(position);
+    }
 }

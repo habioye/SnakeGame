@@ -19,8 +19,8 @@ public class DisplayPanel extends JPanel implements Runnable {
     final int scale = 3;
 
     final int scaledTileSize = tileSize * scale; // 48x48 tiles
-    final int maxScreenColumns = 16;
-    final int maxScreenRows = 12;
+    final int maxScreenColumns = 17;
+    final int maxScreenRows = 13;
     final int screenWidth = (scaledTileSize * maxScreenColumns); // 768 px
     final int screenHeight = scaledTileSize * maxScreenRows;   // 576 px
 
@@ -28,10 +28,11 @@ public class DisplayPanel extends JPanel implements Runnable {
     int snakeX = 0;   // used to update snake x position.
     int snakeY = 0;   // used to update snake y position.
     int snakeSpeed = 4; // used to adjust snake default speed.
-    Snake snake = new Snake(snakeX, snakeY, snakeSpeed, scaledTileSize, ((maxScreenColumns*maxScreenRows)/2)-1);
+    int snakeStartPosition = (maxScreenRows*(maxScreenColumns/2));
+    Snake snake;
 
     // GAME LOOP SETTINGS
-    final int FPS = 20;
+    final int FPS = 30;
 
     // TILE ARRAY
     ArrayList<Tile> allTiles = new ArrayList<>();
@@ -42,6 +43,8 @@ public class DisplayPanel extends JPanel implements Runnable {
             allTiles.add(new Tile(scaledTileSize));
         }
 
+        this.snake = new Snake(snakeX, snakeY, snakeSpeed, 
+        scaledTileSize, snakeStartPosition);
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true); // all drawing from this component will be
@@ -75,7 +78,6 @@ public class DisplayPanel extends JPanel implements Runnable {
             if(delta >= 1) {
                 // Update position of snake, food, and moving enemies.
                 updatePosition();
-                System.out.println("Hello");
                 
                 // Repaint the component every iteration of the loop.
                 repaint();
@@ -98,10 +100,11 @@ public class DisplayPanel extends JPanel implements Runnable {
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D)g;
-        // Draw every single tile
+
+        // Draw every single tile on the map.
         for(int i = 0; i < allTiles.size(); i++) {
-            int row = i/16;
-            int column = i%16;
+            int row = i/maxScreenColumns;
+            int column = i%maxScreenColumns;
             g2.setColor(Color.WHITE);
             g2.fillRect(column*scaledTileSize, row*scaledTileSize, scaledTileSize, scaledTileSize);
             g2.setColor(Color.BLACK);
@@ -109,6 +112,8 @@ public class DisplayPanel extends JPanel implements Runnable {
 
         }
         
+        // Draw over every single tile that
+        // the snake inhabits. 
         g2.setColor(Color.GREEN);
         for(int position: snake.getTilePositions()) {
             int row = position/16;
