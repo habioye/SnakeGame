@@ -1,69 +1,101 @@
-import java.awt.BorderLayout;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.*;
 
 @SuppressWarnings("serial")
 public class MainMenuWindow extends JFrame implements ActionListener {
 
-	static final int FRAME_SIZE = 500;
-	static final Font BUTTON_FONT = new Font("Arial", Font.BOLD, 24);
+	static final int FRAME_X = 750;
+	static final int FRAME_Y = FRAME_X;
+	static final Font HEADER_FONT = new Font("Dialog", Font.BOLD, 48);
+	static final Font BUTTON_FONT = new Font("Dialog", Font.BOLD, 24);
+
+	// Swing components we'll be using
+	JPanel northPanel, centerPanel, southPanel;
+	JLabel headerText;
+	JButton easyButton, mediumButton, hardButton;
+	JSlider musicSlider, soundSlider;
 
 	MainMenuWindow() {
 		super("Snake Game"); // Sets window text
 
 		// Configure window settings
-		setSize(FRAME_SIZE, FRAME_SIZE);
+		setSize(FRAME_X, FRAME_Y);
 		setLayout(new BorderLayout());
-		setResizable(false); // Disables resizing window
+		// setResizable(false); // Disables resizing window
 		setLocationRelativeTo(null); // Centers window
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Terminates program when window is closed
 
 		// Instantiate Swing components for north section
-		JPanel northPanel = new JPanel();
-		JLabel headerText = new JLabel("🐍  Snake  🐍");
-		headerText.setFont(headerText.getFont().deriveFont(36f));
+		northPanel = new JPanel();
+		headerText = new JLabel("🐍  Snake  🐍");
+		headerText.setFont(HEADER_FONT);
 
 		northPanel.add(headerText);
 
 		add(northPanel, BorderLayout.NORTH);
 
 		// Instantiate Swing components for center section
-		JPanel centerPanel = new JPanel();
-		JButton easyButton = new JButton("Easy");
-		JButton mediumButton = new JButton("Medium");
-		JButton hardButton = new JButton("Hard");
-		JButton[] buttons = { easyButton, mediumButton, hardButton };
+		centerPanel = new JPanel();
+		easyButton = new JButton("Easy");
+		mediumButton = new JButton("Medium");
+		hardButton = new JButton("Hard");
+
+		centerPanel.setLayout(new GridLayout(3, 1));
 
 		// Configure buttons
-		for (JButton b : buttons) {
-			b.setFont(BUTTON_FONT);
-			b.addActionListener(e -> startGame(b));
-			centerPanel.add(b);
+		JButton[] buttons = { easyButton, mediumButton, hardButton };
+		for (JButton btn : buttons) {
+			btn.setPreferredSize(new Dimension(200, 50));
+			btn.setFont(BUTTON_FONT);
+			btn.setFocusable(false); // Disables highlight when button is clicked
+			btn.setRolloverEnabled(false); // Disables hover effect
+			btn.addActionListener(e -> startGame(btn));
+			centerPanel.add(btn);
 		}
 
+		easyButton.setBackground(Color.GREEN);
+		mediumButton.setBackground(Color.YELLOW);
+		hardButton.setBackground(Color.RED);
+
 		add(centerPanel, BorderLayout.CENTER);
+
+		// Instantiate Swing components for south section
+		southPanel = new JPanel();
+		musicSlider = new JSlider(0, 100, 80);
+		soundSlider = new JSlider(0, 100, 80);
+
+		JSlider[] sliders = { musicSlider, soundSlider };
+		for (JSlider s : sliders) {
+			southPanel.add(s);
+		}
+
+		add(southPanel, BorderLayout.SOUTH);
 
 		// Draw the window
 		setVisible(true);
 	}
 
+	public void startGame(JButton button) {
+		String difficulty = "";
+		if (button == easyButton) {
+			difficulty = "easy";
+		} else if (button == mediumButton) {
+			difficulty = "medium";
+		} else if (button == hardButton) {
+			difficulty = "hard";
+		}
+
+		GameSettings settings = new GameSettings(difficulty, musicSlider.getValue(), soundSlider.getValue());
+		System.out.println(settings);
+		
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-		System.out.println();
-	}
-
-	public void startGame(JButton button) {
-		if (button.getText() == "Easy") {
-			System.out.println("Start easy game");
-		} else if (button.getText() == "Medium") {
-			System.out.println("Start medium game");
-		} else if (button.getText() == "Hard") {
-			System.out.println("Start hard game");
-		}
+		System.out.println(source);
 	}
 
 	public static void main(String[] args) {
