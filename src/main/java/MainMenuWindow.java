@@ -17,7 +17,7 @@ public class MainMenuWindow extends JFrame implements ActionListener {
 	// Swing components we'll be using
 	JPanel northPanel, centerPanel, southPanel;
 	JLabel headerLabel, musicLabel, soundLabel;
-	JButton easyButton, mediumButton, hardButton;
+	JButton easyButton, mediumButton, hardButton, exitButton;
 	JSlider musicSlider, soundSlider;
 
 	MainMenuWindow() {
@@ -44,23 +44,25 @@ public class MainMenuWindow extends JFrame implements ActionListener {
 		easyButton = new JButton("Easy");
 		mediumButton = new JButton("Medium");
 		hardButton = new JButton("Hard");
+		exitButton = new JButton("Exit");
 
-		centerPanel.setLayout(new GridLayout(3, 1));
+		centerPanel.setLayout(new GridLayout(4, 1));
 
 		// Configure buttons
-		JButton[] buttons = { easyButton, mediumButton, hardButton };
+		JButton[] buttons = { easyButton, mediumButton, hardButton, exitButton };
 		for (JButton btn : buttons) {
 			btn.setPreferredSize(new Dimension(200, 50));
 			btn.setFont(BUTTON_FONT);
 			btn.setFocusable(false); // Disables highlight when button is clicked
 			btn.setRolloverEnabled(false); // Disables hover effect
-			btn.addActionListener(e -> startGame(btn));
+			btn.addActionListener(e -> actionPerformed(e));
 			centerPanel.add(btn);
 		}
 
 		easyButton.setBackground(Color.GREEN);
 		mediumButton.setBackground(Color.YELLOW);
 		hardButton.setBackground(Color.RED);
+		exitButton.setBackground(Color.WHITE);
 
 		add(centerPanel, BorderLayout.CENTER);
 
@@ -75,6 +77,7 @@ public class MainMenuWindow extends JFrame implements ActionListener {
 		musicLabel.setFont(SOUTH_FONT);
 		soundLabel.setFont(SOUTH_FONT);
 
+		// Updates UI when slider is moved
 		musicSlider.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -114,16 +117,19 @@ public class MainMenuWindow extends JFrame implements ActionListener {
 		System.out.println(settings);
 
 		// Close this window and start the game
-		// dispose();
-		// SnakeGame.main(null);
+		dispose();
+		SnakeGame.main(null);
 
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-		System.out.println(source);
-		revalidate();
+		if (source == easyButton || source == mediumButton || source == hardButton) {
+			startGame((JButton) source);
+		} else if (source == exitButton) {
+			System.exit(0); // Terminate program
+		}
 	}
 
 	public static void main(String[] args) {
