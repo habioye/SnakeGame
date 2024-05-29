@@ -30,39 +30,46 @@ public class SnakeGame {
 
     public float frametime;
 
+    public static class Dir {
+        int direction;
+
+    }
 
     public static void main (String[] args) {
         JFrame window = new JFrame();
+        final Dir direction = new Dir();
 
-                    window.addKeyListener(new KeyAdapter() {
-                        public void keyPressed(KeyEvent e) {
-                            int keyCode = e.getKeyCode();
-                            if (keyCode == KeyEvent.VK_UP) {
-                                direction = 0;
-                                System.out.println("Up Arrrow-Key is pressed!"+direction);
-                            } else if (keyCode == KeyEvent.VK_DOWN) {
-                                direction = 1;
-                                System.out.println("Down Arrrow-Key is pressed!"+direction);
-                            } else if (keyCode == KeyEvent.VK_LEFT) {
-                                direction = 2;
-                                System.out.println("Left Arrrow-Key is pressed!"+direction);
-                            } else if (keyCode == KeyEvent.VK_RIGHT) {
-                                direction = 3;
-                                System.out.println("Right Arrrow-Key is pressed!"+direction);
-                            }
+        direction.direction = 2;
 
-                        }
-                    });
+        KeyAdapter keylisener = new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                int keyCode = e.getKeyCode();
+                if (keyCode == KeyEvent.VK_UP) {
+                    direction.direction = 0;
+                    System.out.println("Up Arrrow-Key is pressed!"+direction);
+                } else if (keyCode == KeyEvent.VK_DOWN) {
+                    direction.direction = 1;
+                    System.out.println("Down Arrrow-Key is pressed!"+direction);
+                } else if (keyCode == KeyEvent.VK_LEFT) {
+                    direction.direction = 2;
+                    System.out.println("Left Arrrow-Key is pressed!"+direction);
+                } else if (keyCode == KeyEvent.VK_RIGHT) {
+                    direction.direction = 3;
+                    System.out.println("Right Arrrow-Key is pressed!"+direction);
+                }
+
+            }
+        };
+        window.addKeyListener(keylisener);
 
 
 
 
-        JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
         window.setTitle("Snake Game");
 
-        DisplayPanel panel = new DisplayPanel();
+        DisplayPanel panel = new DisplayPanel(direction);
         window.add(panel);
 
         window.pack();
