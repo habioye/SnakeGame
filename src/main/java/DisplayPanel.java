@@ -31,7 +31,6 @@ public class DisplayPanel extends JPanel implements Runnable {
     int snakeSpeed = 4; // used to adjust snake default speed.
     int snakeStartPosition = (maxScreenRows*(maxScreenColumns/2));
     Snake snake;
-    SnakeGame.Dir direction;
     int movedir;
 
     // GAME LOOP SETTINGS
@@ -41,15 +40,14 @@ public class DisplayPanel extends JPanel implements Runnable {
     ArrayList<Tile> allTiles = new ArrayList<>();
 
     public DisplayPanel(SnakeGame.Dir direction) {
-        // added key adapter & direction
-        this.direction = direction;
+
 
         for(int i = 0; i < maxScreenColumns*maxScreenRows; i++) {
             allTiles.add(new Tile(scaledTileSize));
         }
 
         this.snake = new Snake(snakeX, snakeY, snakeSpeed, 
-        scaledTileSize, snakeStartPosition);
+        scaledTileSize, snakeStartPosition, direction);
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true); // all drawing from this component will be
@@ -74,8 +72,7 @@ public class DisplayPanel extends JPanel implements Runnable {
         long lastTimeDrawn = System.nanoTime();
         long currentTime;
 
-        // todo created a snake with initial positions
-        Snake snake = new Snake(5,5,2,4,10);
+
 
 
 
@@ -112,7 +109,7 @@ public class DisplayPanel extends JPanel implements Runnable {
     // the food position, powerup position, moving enemies,
     // etc.
     public void updatePosition() {
-        int getkey = this.direction.direction;
+        int getkey = this.snake.direction.direction;
         if (!opposites(getkey,movedir)) {
             movedir = getkey;
             System.out.println(movedir);
