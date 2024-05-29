@@ -22,4 +22,8 @@ public class FoodGeneration {
     public static int getCurrentPosition() {
         return currentPosition;
     }
+
+    public static void resetFoodPosition() {
+        currentPosition = -1;
+    }
 }

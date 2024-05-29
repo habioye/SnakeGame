@@ -107,6 +107,29 @@ public class DisplayPanel extends JPanel implements Runnable {
         }
     }
 
+    public void tryToMove(int newPos) {
+
+        if(newPos < 0 || newPos > allTiles.size()-1) return;
+
+        snake.addTileToHead(newPos);
+
+        if(allTiles.get(newPos) instanceof FoodTile) {
+            FoodGeneration.resetFoodPosition();
+            allTiles.remove(newPos);
+            allTiles.add(newPos, new SnakeTile(scaledTileSize, newPos));
+            return;
+        }
+        
+        allTiles.remove(newPos);
+        allTiles.add(newPos, new SnakeTile(scaledTileSize, newPos));
+
+        int tailPosition = snake.getTilePositions().get(snake.getTilePositions().size()-1).getPosition();
+        snake.removeTailTile();
+        allTiles.remove(tailPosition);
+        allTiles.add(tailPosition, new Tile(scaledTileSize));
+        return;
+    }
+
     // updatePosition() will update the snakes position,
     // the food position, powerup position, moving enemies,
     // etc.
@@ -114,54 +137,24 @@ public class DisplayPanel extends JPanel implements Runnable {
         if(movement.getUp() == true) {
             int headPos = snake.getTilePositions().get(0).getPosition();
             int newPos = headPos-maxScreenColumns;
-            snake.addTileToHead(newPos);
-
-            allTiles.remove(newPos);
-            allTiles.add(newPos, new SnakeTile(scaledTileSize, newPos));
-            int tailPosition = snake.getTilePositions().get(snake.getTilePositions().size()-1).getPosition();
-
-            snake.removeTailTile();
-            allTiles.remove(tailPosition);
-            allTiles.add(tailPosition, new Tile(scaledTileSize));
+            tryToMove(newPos);
         }
         else if(movement.getDown() == true) {
             int headPos = snake.getTilePositions().get(0).getPosition();
             int newPos = headPos+maxScreenColumns;
-            snake.addTileToHead(newPos);
-
-            allTiles.remove(newPos);
-            allTiles.add(newPos, new SnakeTile(scaledTileSize, newPos));
-            int tailPosition = snake.getTilePositions().get(snake.getTilePositions().size()-1).getPosition();
-            
-            snake.removeTailTile();
-            allTiles.remove(tailPosition);
-            allTiles.add(tailPosition, new Tile(scaledTileSize));
+            tryToMove(newPos);
         }
         else if(movement.getLeft() == true) {
             int headPos = snake.getTilePositions().get(0).getPosition();
             int newPos = headPos-1;
-            snake.addTileToHead(newPos);
-
-            allTiles.remove(newPos);
-            allTiles.add(newPos, new SnakeTile(scaledTileSize, newPos));
-            int tailPosition = snake.getTilePositions().get(snake.getTilePositions().size()-1).getPosition();
-            
-            snake.removeTailTile();
-            allTiles.remove(tailPosition);
-            allTiles.add(tailPosition, new Tile(scaledTileSize));
+            if(headPos%maxScreenColumns == 0) return;
+            tryToMove(newPos);
         }
         else if(movement.getRight() == true) {
             int headPos = snake.getTilePositions().get(0).getPosition();
             int newPos = headPos+1;
-            snake.addTileToHead(newPos);
-
-            allTiles.remove(newPos);
-            allTiles.add(newPos, new SnakeTile(scaledTileSize, newPos));
-            int tailPosition = snake.getTilePositions().get(snake.getTilePositions().size()-1).getPosition();
-            
-            snake.removeTailTile();
-            allTiles.remove(tailPosition);
-            allTiles.add(tailPosition, new Tile(scaledTileSize));
+            if((headPos+1)%maxScreenColumns == 0) return;
+            tryToMove(newPos);
         }
         return;
     }
