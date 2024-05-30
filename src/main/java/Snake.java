@@ -3,11 +3,16 @@ import java.util.ArrayList;
 public class Snake {
     int snakeX;
     int snakeY;
+
+    int scaledTileSize;
+    ArrayList<SnakeTile> tilePositions;
+
     int snakeSpeed;
-    ArrayList<Integer> tilePositions; // todo instead of integers we could use the tileposition class
+    
     SnakeGame.Dir direction;
     TilePosition head;
     TilePosition tail;
+
 
     class TilePosition {
         int position;
@@ -17,16 +22,13 @@ public class Snake {
     public Snake(int x, int y, int speed, int scaledTileSize, int startPosition, SnakeGame.Dir direction) {
         snakeX = x;
         snakeY = y;
-        snakeSpeed = speed;
+        this.scaledTileSize = scaledTileSize;
         tilePositions = new ArrayList<>();
-        tilePositions.add(startPosition);
-        this.direction = direction;
-        // todo I wanted to add the head and tail with the tileposition and the next one
+
+        tilePositions.add(new SnakeTile(scaledTileSize, startPosition));
+
     }
 
-    public int getSnakeSpeed() {
-        return snakeSpeed;
-    }
 
     public int getSnakeX() {
         // todo x = p % r
@@ -38,13 +40,22 @@ public class Snake {
         return snakeY;
     }
 
-    public ArrayList<Integer> getTilePositions() {
-        // todo we can get the class instead of the integer
+
+    public ArrayList<SnakeTile> getTilePositions() {
+
         return tilePositions;
     }
 
     // todo
     public void addTilePosition(int position) {
-        tilePositions.add(position);
+        tilePositions.add(new SnakeTile(scaledTileSize, position));
+    }
+
+    public void addTileToHead(int position) {
+        tilePositions.add(0, new SnakeTile(scaledTileSize, position));
+    }
+
+    public void removeTailTile() {
+        tilePositions.remove(tilePositions.size()-1);
     }
 }
