@@ -1,6 +1,7 @@
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyAdapter;
 import java.util.ArrayList;
 import java.awt.Color;
 
@@ -30,6 +31,7 @@ public class DisplayPanel extends JPanel implements Runnable {
     int snakeSpeed = 4; // used to adjust snake default speed.
     int snakeStartPosition = (maxScreenRows*maxScreenColumns)/2;
     Snake snake;
+    int movedir;
 
     // GAME LOOP SETTINGS
     final int FPS = 30;
@@ -40,7 +42,8 @@ public class DisplayPanel extends JPanel implements Runnable {
     // TILE ARRAY
     ArrayList<Tile> allTiles = new ArrayList<>();
 
-    public DisplayPanel() {
+    public DisplayPanel(SnakeGame.Dir direction) {
+
 
         for(int i = 0; i < maxScreenColumns*maxScreenRows; i++) {
             allTiles.add(new Tile(scaledTileSize));
@@ -49,7 +52,7 @@ public class DisplayPanel extends JPanel implements Runnable {
         allTiles.add(snakeStartPosition, new SnakeTile(scaledTileSize, snakeStartPosition));
 
         this.snake = new Snake(snakeX, snakeY, snakeSpeed, 
-        scaledTileSize, snakeStartPosition);
+        scaledTileSize, snakeStartPosition, direction);
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true); // all drawing from this component will be
@@ -76,6 +79,10 @@ public class DisplayPanel extends JPanel implements Runnable {
         long lastTimeDrawn = System.nanoTime();
         long currentTime;
 
+
+
+
+
         while(gameLoop != null) {
 
             currentTime = System.nanoTime();
@@ -96,6 +103,18 @@ public class DisplayPanel extends JPanel implements Runnable {
             }
         }
 
+    }
+    public boolean opposites(int x, int y) {
+        if (y < x) {
+            int tmp  = y;
+            y = x;
+            x = tmp;
+        }
+        if (x == 0 && y == 3) {
+            return true;
+        }
+        if (x ==1 && y ==2) return true;
+        return false;
     }
 
     public void checkFoodSpawn() {
@@ -134,6 +153,7 @@ public class DisplayPanel extends JPanel implements Runnable {
     // the food position, powerup position, moving enemies,
     // etc.
     public void updatePosition() {
+
         if(movement.getUp() == true) {
             int headPos = snake.getTilePositions().get(0).getPosition();
             int newPos = headPos-maxScreenColumns;
@@ -155,6 +175,8 @@ public class DisplayPanel extends JPanel implements Runnable {
             int newPos = headPos+1;
             if((headPos+1)%maxScreenColumns == 0) return;
             tryToMove(newPos);
+
+
         }
         return;
     }
